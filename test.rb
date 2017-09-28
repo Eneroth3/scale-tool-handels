@@ -17,24 +17,14 @@ class ScaleMask
   NO_XY_SCALE_MASK  = 0000100000
   NO_XYZ_SCALE_MASK = 0b00100000
 
-  def self.from_definition(definition)
-    new(definition.behavior.no_scale_mask?)
-  end
-
-  def initialize(no_scale_mask)
-    @no_scale_mask = no_scale_mask
-  end
-
-  # FIXME: Keep reference to definition and apply changes with all setter methods.
-  # be performed each time value is edited?
-  def apply(definition)
-    definition.behavior.no_scale_mask = @no_scale_mask
+  def initialize(definition)
+    @definition = definition
+    @no_scale_mask = definition.behavior.no_scale_mask?
   end
 
   def allow_x=(v)
-    ### return if allow_x? == v # Old code. # TODO: Remove.
-    ### v ? @no_scale_mask -= NO_X_SCALE_MASK : @no_scale_mask += NO_X_SCALE_MASK
     v ? @no_scale_mask &= ~NO_X_SCALE_MASK : @no_scale_mask |= NO_X_SCALE_MASK
+    apply
   end
 
   def allow_x?
@@ -43,6 +33,7 @@ class ScaleMask
 
   def allow_y=(v)
     v ? @no_scale_mask &= ~NO_Y_SCALE_MASK : @no_scale_mask |= NO_Y_SCALE_MASK
+    apply
   end
 
   def allow_y?
@@ -51,6 +42,7 @@ class ScaleMask
 
   def allow_z=(v)
     v ? @no_scale_mask &= ~NO_Z_SCALE_MASK : @no_scale_mask |= NO_Z_SCALE_MASK
+    apply
   end
 
   def allow_z?
@@ -65,13 +57,20 @@ class ScaleMask
     @no_scale_mask.to_s(2)
   end
 
+  private
+
+  def apply
+    @definition.behavior.no_scale_mask = @no_scale_mask
+    p @definition.behavior.no_scale_mask?
+  end
+
 end
 
 UI.add_context_menu_handler do |menu|
   model = Sketchup.active_model
   entity = model.selection.first
   next unless entity.is_a?(Sketchup::ComponentInstance)
-  ms = ScaleMask.from_definition(entity.definition)
+  ms = ScaleMask.new(entity.definition)
 
   item = menu.add_item("Scale X") { ms.allow_x = !ms.allow_x? }
   menu.set_validation_proc(item) { ms.allow_x? ? MF_CHECKED : MF_UNCHECKED }
