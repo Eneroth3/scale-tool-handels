@@ -4,6 +4,8 @@
 
 module EneScaleToolHandles
 
+  Sketchup.require(File.join(PLUGIN_DIR, "bitmask"))
+
   # Wrapper class to handle scale handle masks.
   # Instead of setting each type of handle separately this wrapper
   # handles each axes, 2D diagonals and 3D diagonals.
@@ -19,34 +21,35 @@ module EneScaleToolHandles
 
     def initialize(definition)
       @definition = definition
-      @no_scale_mask = definition.behavior.no_scale_mask?
+      # API has ? at end of method even though it returns integer.
+      @no_scale_mask = BitMask.new(definition.behavior.no_scale_mask?)
     end
 
     def allow_x=(v)
-      @no_scale_mask = self.class.set_bit(@no_scale_mask, NO_X_SCALE, !v)
+      @no_scale_mask[NO_X_SCALE] = !v
       apply
     end
 
     def allow_x?
-      !self.class.bit?(@no_scale_mask, NO_X_SCALE)
+      !@no_scale_mask[NO_X_SCALE]
     end
 
     def allow_y=(v)
-      @no_scale_mask = self.class.set_bit(@no_scale_mask, NO_Y_SCALE, !v)
+      @no_scale_mask[NO_Y_SCALE] = !v
       apply
     end
 
     def allow_y?
-      !self.class.bit?(@no_scale_mask, NO_Y_SCALE)
+      !@no_scale_mask[NO_Y_SCALE]
     end
 
     def allow_z=(v)
-      @no_scale_mask = self.class.set_bit(@no_scale_mask, NO_Z_SCALE, !v)
+      @no_scale_mask[NO_Z_SCALE] = !v
       apply
     end
 
     def allow_z?
-      !self.class.bit?(@no_scale_mask, NO_Z_SCALE)
+      !@no_scale_mask[NO_Z_SCALE]
     end
 
     # TODO: How should this value be acquired?
@@ -54,24 +57,13 @@ module EneScaleToolHandles
     end
 
     def inspect
-      @no_scale_mask.to_s(2)
+      @no_scale_mask.inspect
     end
 
     private
 
-    # REVIEW: Create separate bitmask class with these on?
-
-    def self.set_bit(bitmask, index, value)
-      value_mask = 1 << index
-      value ? bitmask |= value_mask : bitmask &= ~value_mask
-    end
-
-    def self.bit?(bitmask, index)
-      (bitmask & (1 << index)) != 0
-    end
-
     def apply
-      @definition.behavior.no_scale_mask = @no_scale_mask
+      @definition.behavior.no_scale_mask = @no_scale_mask.to_i
     end
 
   end
