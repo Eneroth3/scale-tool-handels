@@ -28,6 +28,7 @@ module EneScaleToolHandles
     # REVIEW: These methods are very similar. Can they be created using meta-programming?
 
     def allow_x=(v)
+      # TODO: If diagonals have been unavailable, assume user wants to make them available again.
       if allow_2d?
         @no_scale_mask[NO_XY_SCALE] = !v
         @no_scale_mask[NO_XZ_SCALE] = !v
@@ -75,14 +76,32 @@ module EneScaleToolHandles
       !@no_scale_mask[NO_Z_SCALE]
     end
 
-    # TODO: How should these value be acquired?
+    def allow_2d=(v)
+      @no_scale_mask[NO_XY_SCALE] = !(allow_x? && allow_y? && v)
+      @no_scale_mask[NO_XZ_SCALE] = !(allow_x? && allow_z? && v)
+      @no_scale_mask[NO_YZ_SCALE] = !(allow_y? && allow_z? && v)
+      apply
+    end
 
     def allow_2d?
-      true
+      !@no_scale_mask[NO_XY_SCALE] || !@no_scale_mask[NO_XZ_SCALE] || !@no_scale_mask[NO_YZ_SCALE]
+    end
+
+    def avilable_2d?
+      [allow_x?, allow_y?, allow_z?].count(true) >= 2
+    end
+
+    def allow_3d=(v)
+      @no_scale_mask[NO_XYZ_SCALE] = !(allow_x? && allow_y? && allow_z? && v)
+      apply
     end
 
     def allow_3d?
-      true
+      !@no_scale_mask[NO_XYZ_SCALE]
+    end
+
+    def available_3d?
+      allow_x? && allow_y? && allow_z?
     end
 
     def inspect
@@ -105,15 +124,20 @@ module EneScaleToolHandles
     ms = ScaleMask.new(entity.definition)
 
     item = menu.add_item("Scale X") { ms.allow_x = !ms.allow_x? }
-    menu.set_validation_proc(item) { ms.allow_x? ? MF_CHECKED : MF_UNCHECKED }
+    menu.set_validation_proc(item)  { ms.allow_x? ? MF_CHECKED : MF_UNCHECKED }
 
     item = menu.add_item("Scale Y") { ms.allow_y = !ms.allow_y? }
-    menu.set_validation_proc(item) { ms.allow_y? ? MF_CHECKED : MF_UNCHECKED }
+    menu.set_validation_proc(item)  { ms.allow_y? ? MF_CHECKED : MF_UNCHECKED }
 
     item = menu.add_item("Scale Z") { ms.allow_z = !ms.allow_z? }
-    menu.set_validation_proc(item) { ms.allow_z? ? MF_CHECKED : MF_UNCHECKED }
+    menu.set_validation_proc(item)  { ms.allow_z? ? MF_CHECKED : MF_UNCHECKED }
 
     menu.add_separator
+
+    item = menu.add_item("Scale 2D") { ms.allow_2d = !ms.allow_2d? }
+    menu.set_validation_proc(item)   { ms.avilable_2d? ? (ms.allow_2d? ? MF_CHECKED : MF_UNCHECKED) : MF_GRAYED }
+    item = menu.add_item("Scale 3D") { ms.allow_3d = !ms.allow_3d? }
+    menu.set_validation_proc(item)   { ms.available_3d? ? (ms.allow_3d? ? MF_CHECKED : MF_UNCHECKED) : MF_GRAYED }
   end
 
 end
