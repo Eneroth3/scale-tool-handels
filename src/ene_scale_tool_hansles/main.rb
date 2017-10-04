@@ -139,28 +139,31 @@ module EneScaleToolHandles
     nil
   end
 
-  UI.add_context_menu_handler do |menu|
-    model = Sketchup.active_model
-    next unless model.selection.size == 1
-    entity = model.selection.first
-    next unless [Sketchup::ComponentInstance, Sketchup::Group].include?(entity.class)
-    ms = ScaleMask.new(entity.definition)
+  unless file_loaded?(__FILE__)
+    file_loaded(__FILE__)
+    UI.add_context_menu_handler do |menu|
+      model = Sketchup.active_model
+      next unless model.selection.size == 1
+      entity = model.selection.first
+      next unless [Sketchup::ComponentInstance, Sketchup::Group].include?(entity.class)
+      ms = ScaleMask.new(entity.definition)
 
-    item = menu.add_item("Scale X") { ms.allow_x = !ms.allow_x? }
-    menu.set_validation_proc(item)  { ms.allow_x? ? MF_CHECKED : MF_UNCHECKED }
+      item = menu.add_item("Scale X") { ms.allow_x = !ms.allow_x? }
+      menu.set_validation_proc(item)  { ms.allow_x? ? MF_CHECKED : MF_UNCHECKED }
 
-    item = menu.add_item("Scale Y") { ms.allow_y = !ms.allow_y? }
-    menu.set_validation_proc(item)  { ms.allow_y? ? MF_CHECKED : MF_UNCHECKED }
+      item = menu.add_item("Scale Y") { ms.allow_y = !ms.allow_y? }
+      menu.set_validation_proc(item)  { ms.allow_y? ? MF_CHECKED : MF_UNCHECKED }
 
-    item = menu.add_item("Scale Z") { ms.allow_z = !ms.allow_z? }
-    menu.set_validation_proc(item)  { ms.allow_z? ? MF_CHECKED : MF_UNCHECKED }
+      item = menu.add_item("Scale Z") { ms.allow_z = !ms.allow_z? }
+      menu.set_validation_proc(item)  { ms.allow_z? ? MF_CHECKED : MF_UNCHECKED }
 
-    menu.add_separator
+      menu.add_separator
 
-    item = menu.add_item("Scale 2D") { ms.allow_2d = !ms.allow_2d? }
-    menu.set_validation_proc(item)   { ms.avilable_2d? ? (ms.allow_2d? ? MF_CHECKED : MF_UNCHECKED) : MF_GRAYED }
-    item = menu.add_item("Scale 3D") { ms.allow_3d = !ms.allow_3d? }
-    menu.set_validation_proc(item)   { ms.available_3d? ? (ms.allow_3d? ? MF_CHECKED : MF_UNCHECKED) : MF_GRAYED }
+      item = menu.add_item("Scale 2D") { ms.allow_2d = !ms.allow_2d? }
+      menu.set_validation_proc(item)   { ms.avilable_2d? ? (ms.allow_2d? ? MF_CHECKED : MF_UNCHECKED) : MF_GRAYED }
+      item = menu.add_item("Scale 3D") { ms.allow_3d = !ms.allow_3d? }
+      menu.set_validation_proc(item)   { ms.available_3d? ? (ms.allow_3d? ? MF_CHECKED : MF_UNCHECKED) : MF_GRAYED }
+    end
   end
 
 end
