@@ -148,6 +148,9 @@ module EneScaleToolHandles
       next unless [Sketchup::ComponentInstance, Sketchup::Group].include?(entity.class)
       sc = ScaleController.new(entity.definition)
 
+      menu.add_separator
+      menu = menu.add_submenu(EXTENSION.name)
+
       item = menu.add_item("Red Axis") { sc.axis_x = !sc.axis_x? }
       menu.set_validation_proc(item)  { sc.axis_x? ? MF_CHECKED : MF_UNCHECKED }
 
@@ -161,6 +164,7 @@ module EneScaleToolHandles
 
       item = menu.add_item("2D Diagonals") { sc.diagonal_2d = !sc.diagonal_2d? }
       menu.set_validation_proc(item)   { sc.diagonal_2d_enabled? ? (sc.diagonal_2d? ? MF_CHECKED : MF_UNCHECKED) : MF_GRAYED }
+
       item = menu.add_item("3D Diagonals") { sc.diagonal_3d = !sc.diagonal_3d? }
       menu.set_validation_proc(item)   { sc.diagonal_3d_enabled? ? (sc.diagonal_3d? ? MF_CHECKED : MF_UNCHECKED) : MF_GRAYED }
     end
