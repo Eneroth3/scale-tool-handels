@@ -25,7 +25,16 @@ module EneScaleToolHandles
       @no_scale_mask = BitMask.new(definition.behavior.no_scale_mask?)
     end
 
+    # REVIEW: These methods are very similar. Can they be created using meta-programming?
+
     def allow_x=(v)
+      if allow_2d?
+        @no_scale_mask[NO_XY_SCALE] = !v
+        @no_scale_mask[NO_XZ_SCALE] = !v
+      end
+      if allow_3d?
+         @no_scale_mask[NO_XYZ_SCALE] = !v
+      end
       @no_scale_mask[NO_X_SCALE] = !v
       apply
     end
@@ -35,6 +44,13 @@ module EneScaleToolHandles
     end
 
     def allow_y=(v)
+      if allow_2d?
+        @no_scale_mask[NO_XY_SCALE] = !v
+        @no_scale_mask[NO_YZ_SCALE] = !v
+      end
+      if allow_3d?
+         @no_scale_mask[NO_XYZ_SCALE] = !v
+      end
       @no_scale_mask[NO_Y_SCALE] = !v
       apply
     end
@@ -44,6 +60,13 @@ module EneScaleToolHandles
     end
 
     def allow_z=(v)
+      if allow_2d?
+        @no_scale_mask[NO_XZ_SCALE] = !v
+        @no_scale_mask[NO_YZ_SCALE] = !v
+      end
+      if allow_3d?
+         @no_scale_mask[NO_XYZ_SCALE] = !v
+      end
       @no_scale_mask[NO_Z_SCALE] = !v
       apply
     end
@@ -52,8 +75,14 @@ module EneScaleToolHandles
       !@no_scale_mask[NO_Z_SCALE]
     end
 
-    # TODO: How should this value be acquired?
+    # TODO: How should these value be acquired?
+
     def allow_2d?
+      true
+    end
+
+    def allow_3d?
+      true
     end
 
     def inspect
