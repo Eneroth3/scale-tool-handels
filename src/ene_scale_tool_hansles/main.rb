@@ -70,8 +70,9 @@ module EneScaleToolHandles
 
   UI.add_context_menu_handler do |menu|
     model = Sketchup.active_model
+    next unless model.selection.size == 1
     entity = model.selection.first
-    next unless entity.is_a?(Sketchup::ComponentInstance)# TODO: Make work on groups too!
+    next unless [Sketchup::ComponentInstance, Sketchup::Group].include?(entity.class)
     ms = ScaleMask.new(entity.definition)
 
     item = menu.add_item("Scale X") { ms.allow_x = !ms.allow_x? }
