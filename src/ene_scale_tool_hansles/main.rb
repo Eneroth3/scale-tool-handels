@@ -9,13 +9,13 @@ module EneScaleToolHandles
   # handles each axes, 2D diagonals and 3D diagonals.
   class ScaleMask
 
-    NO_X_SCALE_MASK   = 0b00000001
-    NO_Y_SCALE_MASK   = 0b00000010
-    NO_Z_SCALE_MASK   = 0b00000100
-    NO_XZ_SCALE_MASK  = 0b00001000
-    NO_YZ_SCALE_MASK  = 0b00010000
-    NO_XY_SCALE_MASK  = 0000100000
-    NO_XYZ_SCALE_MASK = 0b00100000
+    NO_X_SCALE   = 0
+    NO_Y_SCALE   = 1
+    NO_Z_SCALE   = 2
+    NO_XZ_SCALE  = 3
+    NO_YZ_SCALE  = 4
+    NO_XY_SCALE  = 5
+    NO_XYZ_SCALE = 6
 
     def initialize(definition)
       @definition = definition
@@ -23,30 +23,30 @@ module EneScaleToolHandles
     end
 
     def allow_x=(v)
-      v ? @no_scale_mask &= ~NO_X_SCALE_MASK : @no_scale_mask |= NO_X_SCALE_MASK
+      @no_scale_mask = self.class.set_bit(@no_scale_mask, NO_X_SCALE, !v)
       apply
     end
 
     def allow_x?
-      (@no_scale_mask & NO_X_SCALE_MASK) == 0
+      !self.class.bit?(@no_scale_mask, NO_X_SCALE)
     end
 
     def allow_y=(v)
-      v ? @no_scale_mask &= ~NO_Y_SCALE_MASK : @no_scale_mask |= NO_Y_SCALE_MASK
+      @no_scale_mask = self.class.set_bit(@no_scale_mask, NO_Y_SCALE, !v)
       apply
     end
 
     def allow_y?
-      (@no_scale_mask & NO_Y_SCALE_MASK) == 0
+      !self.class.bit?(@no_scale_mask, NO_Y_SCALE)
     end
 
     def allow_z=(v)
-      v ? @no_scale_mask &= ~NO_Z_SCALE_MASK : @no_scale_mask |= NO_Z_SCALE_MASK
+      @no_scale_mask = self.class.set_bit(@no_scale_mask, NO_Z_SCALE, !v)
       apply
     end
 
     def allow_z?
-      (@no_scale_mask & NO_Z_SCALE_MASK) == 0
+      !self.class.bit?(@no_scale_mask, NO_Z_SCALE)
     end
 
     # TODO: How should this value be acquired?
@@ -59,9 +59,19 @@ module EneScaleToolHandles
 
     private
 
+    # REVIEW: Create separate bitmask class with these on?
+
+    def self.set_bit(bitmask, index, value)
+      value_mask = 1 << index
+      value ? bitmask |= value_mask : bitmask &= ~value_mask
+    end
+
+    def self.bit?(bitmask, index)
+      (bitmask & (1 << index)) != 0
+    end
+
     def apply
       @definition.behavior.no_scale_mask = @no_scale_mask
-      p @definition.behavior.no_scale_mask?
     end
 
   end
@@ -69,7 +79,7 @@ module EneScaleToolHandles
   UI.add_context_menu_handler do |menu|
     model = Sketchup.active_model
     entity = model.selection.first
-    next unless entity.is_a?(Sketchup::ComponentInstance)
+    next unless entity.is_a?(Sketchup::ComponentInstance)# TODO: Make work on groups too!
     ms = ScaleMask.new(entity.definition)
 
     item = menu.add_item("Scale X") { ms.allow_x = !ms.allow_x? }
