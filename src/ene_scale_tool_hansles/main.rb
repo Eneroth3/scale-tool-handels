@@ -28,12 +28,11 @@ module EneScaleToolHandles
     # REVIEW: These methods are very similar. Can they be created using meta-programming?
 
     def axis_x=(v)
-      # TODO: If diagonals have been unavailable, assume user wants to make them available again.
-      if diagonal_2d?
+      if diagonal_2d? || !diagonal_2d_enabled?
         @no_scale_mask[NO_XY_SCALE] = !v
         @no_scale_mask[NO_XZ_SCALE] = !v
       end
-      if diagonal_3d?
+      if diagonal_3d? || !diagonal_3d_enabled?
          @no_scale_mask[NO_XYZ_SCALE] = !v
       end
       @no_scale_mask[NO_X_SCALE] = !v
@@ -45,11 +44,11 @@ module EneScaleToolHandles
     end
 
     def axis_y=(v)
-      if diagonal_2d?
+      if diagonal_2d? || !diagonal_2d_enabled?
         @no_scale_mask[NO_XY_SCALE] = !v
         @no_scale_mask[NO_YZ_SCALE] = !v
       end
-      if diagonal_3d?
+      if diagonal_3d? || !diagonal_3d_enabled?
          @no_scale_mask[NO_XYZ_SCALE] = !v
       end
       @no_scale_mask[NO_Y_SCALE] = !v
@@ -61,11 +60,11 @@ module EneScaleToolHandles
     end
 
     def axis_z=(v)
-      if diagonal_2d?
+      if diagonal_2d? || !diagonal_2d_enabled?
         @no_scale_mask[NO_XZ_SCALE] = !v
         @no_scale_mask[NO_YZ_SCALE] = !v
       end
-      if diagonal_3d?
+      if diagonal_3d? || !diagonal_3d_enabled?
          @no_scale_mask[NO_XYZ_SCALE] = !v
       end
       @no_scale_mask[NO_Z_SCALE] = !v
