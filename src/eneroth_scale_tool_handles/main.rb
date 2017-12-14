@@ -19,6 +19,8 @@ module EneScaleToolHandles
     NO_XY_SCALE  = 5
     NO_XYZ_SCALE = 6
 
+    SCALE_TOOL_ID = 21236
+
     def initialize(definition)
       @definition = definition
       # API has ? at end of method even though it returns integer.
@@ -111,6 +113,16 @@ module EneScaleToolHandles
 
     def apply
       @definition.behavior.no_scale_mask = @no_scale_mask.to_i
+
+      # Update handles in Scale Tool by re-selecting the current selection.
+      if @definition.model.tools.active_tool_id == SCALE_TOOL_ID
+        selection = @definition.model.selection
+        selected = selection.to_a
+        selection.clear
+        selection.add(selected)
+      end
+
+      nil
     end
 
   end
