@@ -17,7 +17,7 @@ module EneScaleToolHandles
   EXTENSION.creator     = "Julia Christina Eneroth"
   EXTENSION.description =
     "Simplified interface to set what scale tool handles component has."
-  EXTENSION.version     = "1.0.0"
+  EXTENSION.version     = "1.0.1"
   EXTENSION.copyright   = "#{EXTENSION.creator} 2017"
   Sketchup.register_extension(EXTENSION, true)
 
