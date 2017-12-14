@@ -31,11 +31,11 @@ module EneScaleToolHandles
 
     def axis_x=(v)
       if diagonal_2d? || !diagonal_2d_enabled?
-        @no_scale_mask[NO_XY_SCALE] = !v
-        @no_scale_mask[NO_XZ_SCALE] = !v
+        @no_scale_mask[NO_XY_SCALE] = !(v && axis_y?)
+        @no_scale_mask[NO_XZ_SCALE] = !(v && axis_z?)
       end
       if diagonal_3d? || !diagonal_3d_enabled?
-         @no_scale_mask[NO_XYZ_SCALE] = !v
+         @no_scale_mask[NO_XYZ_SCALE] = !(v && axis_y? && axis_z?)
       end
       @no_scale_mask[NO_X_SCALE] = !v
       apply
@@ -47,11 +47,11 @@ module EneScaleToolHandles
 
     def axis_y=(v)
       if diagonal_2d? || !diagonal_2d_enabled?
-        @no_scale_mask[NO_XY_SCALE] = !v
-        @no_scale_mask[NO_YZ_SCALE] = !v
+        @no_scale_mask[NO_XY_SCALE] = !(v && axis_x?)
+        @no_scale_mask[NO_YZ_SCALE] = !(v && axis_z?)
       end
       if diagonal_3d? || !diagonal_3d_enabled?
-         @no_scale_mask[NO_XYZ_SCALE] = !v
+         @no_scale_mask[NO_XYZ_SCALE] = !(v && axis_x? && axis_z?)
       end
       @no_scale_mask[NO_Y_SCALE] = !v
       apply
@@ -63,11 +63,11 @@ module EneScaleToolHandles
 
     def axis_z=(v)
       if diagonal_2d? || !diagonal_2d_enabled?
-        @no_scale_mask[NO_XZ_SCALE] = !v
-        @no_scale_mask[NO_YZ_SCALE] = !v
+        @no_scale_mask[NO_XZ_SCALE] = !(v && axis_x?)
+        @no_scale_mask[NO_YZ_SCALE] = !(v && axis_y?)
       end
       if diagonal_3d? || !diagonal_3d_enabled?
-         @no_scale_mask[NO_XYZ_SCALE] = !v
+         @no_scale_mask[NO_XYZ_SCALE] = !(v && axis_x? && axis_y?)
       end
       @no_scale_mask[NO_Z_SCALE] = !v
       apply
