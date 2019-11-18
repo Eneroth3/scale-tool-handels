@@ -1,9 +1,0 @@
-This extension provides a simplified interface to handle Scale Tool handles on groups and components (pun intended). Instead of micro managing each of the 7 handle pairs individually this plugin automatically adjusts the diagonal handles depending on what main axes scaling is enabled in.
-
-This can be useful on very slim components, e.g. pipes, where otherwise the correct handle is difficult to grab.
-
-Please note that the handles in Scale Tool aren't instantly updated. If the tool is already active you can re-activate it to update the handles.
-
-
-Testing Procedure:
-This plugin introduces a simplified interface for setting scale handles which is normally controlled from the Dynamic Components plugin (although the feature itself is a part of the SketchUp core). Please check whether it's okay to expose this to Make users. Otherwise I can limit the Extension to only load in Pro as I did with my Solid Tools.
